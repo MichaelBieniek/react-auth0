@@ -36,6 +36,17 @@ app.get("/secure", checkJwt, (req, res) => {
 	});
 });
 
+function checkRole(role) {
+	return (req, res, next) => {
+		const assignedRoles = req.user["http://localhost3000/roles"];
+		if (Array.isArray(assignedRoles) && assignedRoles.includes(role)) {
+			return next();
+		} else {
+			return res.send(401).send("Insufficient role");
+		}
+	};
+}
+
 app.get("/courses", checkJwt, checkScope(["read:courses"]), (req, res) => {
 	res.json({
 		courses: [{ id: 1, title: "Course 1" }, { id: 2, title: "Course 2" }],
